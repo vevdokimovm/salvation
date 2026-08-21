@@ -20,5 +20,4 @@ _local/
 # Публичное зеркало: сюда НЕ едет ничего из перечисленного.
 # Правило и обоснование — base-repo/00-infrastructure/59-public-mirror-filter.md.
 _base/
-WATCHLOG.md
 00-infrastructure/
