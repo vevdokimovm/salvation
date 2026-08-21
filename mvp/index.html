@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Спасение — дневник практики</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+  :root{
+    --ink:#151719;
+    --ink-2:#22262a;
+    --paper:#f2efe9;
+    --paper-2:#e8e3d9;
+    --rule:#c9c2b4;
+    --muted:#6d6a63;
+    --gold:#8a6f2e;
+    --deep:#2c3a44;
+    --ok:#3f6b4f;
+    --pad:clamp(16px,4vw,40px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:Inter,system-ui,sans-serif;
+    font-weight:400;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.55;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:var(--pad) var(--pad) 80px}
+
+  /* ── шапка */
+  header{border-bottom:1px solid var(--rule);padding-bottom:20px;margin-bottom:28px}
+  .kicker{
+    font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--muted);font-weight:500;margin-bottom:10px;
+  }
+  h1{
+    font-family:Cormorant,Georgia,serif;font-weight:300;
+    font-size:clamp(38px,8vw,60px);line-height:.95;letter-spacing:-.01em;
+  }
+  h1 em{font-style:italic;color:var(--gold)}
+  .verse{
+    font-family:Cormorant,Georgia,serif;font-style:italic;
+    font-size:clamp(15px,2.6vw,18px);color:var(--muted);
+    margin-top:14px;max-width:52ch;
+  }
+  .verse b{font-style:normal;font-weight:600;color:var(--ink-2)}
+
+  /* ── навигация */
+  nav{display:flex;gap:2px;margin-bottom:28px;border-bottom:1px solid var(--rule)}
+  nav button{
+    background:none;border:0;border-bottom:2px solid transparent;
+    font:inherit;font-size:13px;font-weight:500;letter-spacing:.04em;
+    color:var(--muted);padding:9px 14px;cursor:pointer;margin-bottom:-1px;
+  }
+  nav button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--gold)}
+  nav button:focus-visible{outline:2px solid var(--deep);outline-offset:2px}
+
+  section[hidden]{display:none}
+
+  .date{
+    font-family:Cormorant,Georgia,serif;font-size:26px;font-weight:400;
+    margin-bottom:4px;
+  }
+  .date-sub{font-size:12px;color:var(--muted);letter-spacing:.06em;margin-bottom:24px}
+
+  /* ── карточка параметра */
+  .param{
+    border-top:1px solid var(--rule);
+    padding:18px 0;
+  }
+  .param:first-of-type{border-top:0}
+  .param-head{display:flex;gap:12px;align-items:baseline}
+  .num{
+    font-family:Cormorant,Georgia,serif;font-size:22px;color:var(--gold);
+    min-width:26px;font-weight:600;line-height:1;
+  }
+  .param-name{font-weight:600;font-size:15px;letter-spacing:.01em}
+  .ref{font-size:11px;color:var(--muted);letter-spacing:.04em;margin-left:auto;white-space:nowrap}
+  .q{
+    font-family:Cormorant,Georgia,serif;font-style:italic;font-size:17px;
+    color:var(--ink-2);margin:8px 0 12px 38px;
+  }
+  .note{
+    display:block;width:calc(100% - 38px);margin-left:38px;
+    background:transparent;border:0;border-bottom:1px solid var(--rule);
+    font:inherit;font-size:14px;color:var(--ink);padding:6px 0;resize:none;
+    min-height:30px;overflow:hidden;
+  }
+  .note::placeholder{color:#a8a296}
+  .note:focus{outline:0;border-bottom-color:var(--gold)}
+  .note.filled{border-bottom-color:var(--ok)}
+
+  /* ── практика */
+  .practice{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:14px;margin-top:8px;
+  }
+  .cell{border:1px solid var(--rule);padding:14px;background:var(--paper-2)}
+  .cell h3{font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted);font-weight:600;margin-bottom:8px}
+  .big{font-family:Cormorant,Georgia,serif;font-size:34px;line-height:1;font-weight:400}
+  .big small{font-size:13px;font-family:Inter,sans-serif;color:var(--muted);margin-left:4px}
+  .cell input[type=date]{
+    font:inherit;font-size:13px;background:transparent;border:0;
+    border-bottom:1px solid var(--rule);padding:4px 0;margin-top:8px;width:100%;color:var(--ink);
+  }
+  .cell input[type=date]:focus{outline:0;border-bottom-color:var(--gold)}
+
+  .toggle{
+    display:flex;align-items:center;gap:10px;margin:6px 0;
+    font-size:14px;cursor:pointer;user-select:none;
+  }
+  .toggle input{appearance:none;width:17px;height:17px;border:1px solid var(--rule);
+    background:var(--paper);cursor:pointer;flex:none;position:relative}
+  .toggle input:checked{background:var(--deep);border-color:var(--deep)}
+  .toggle input:checked::after{
+    content:"";position:absolute;left:5px;top:1px;width:5px;height:10px;
+    border:solid var(--paper);border-width:0 2px 2px 0;transform:rotate(43deg);
+  }
+  .toggle input:focus-visible{outline:2px solid var(--deep);outline-offset:2px}
+
+  /* ── сетка истории */
+  .grid-row{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+  .grid-label{font-size:12px;width:150px;flex:none;color:var(--ink-2)}
+  .cells{display:flex;gap:2px;flex-wrap:nowrap;overflow:hidden}
+  .c{width:9px;height:16px;background:var(--paper-2);border:1px solid #ddd7ca}
+  .c.on{background:var(--deep);border-color:var(--deep)}
+  .c.today{outline:1px solid var(--gold);outline-offset:1px}
+
+  .entry{border-top:1px solid var(--rule);padding:16px 0}
+  .entry h4{font-family:Cormorant,serif;font-size:19px;font-weight:600;margin-bottom:6px}
+  .entry p{font-size:14px;margin:3px 0}
+  .entry p b{font-weight:600;color:var(--gold);font-size:12px;
+    letter-spacing:.04em;text-transform:uppercase}
+
+  .save{
+    position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
+    background:var(--ink);color:var(--paper);border:0;
+    font:inherit;font-size:13px;font-weight:500;letter-spacing:.06em;
+    padding:13px 30px;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.18);
+  }
+  .save:hover{background:var(--deep)}
+  .save:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+  .save[data-state="saved"]{background:var(--ok)}
+
+  .foot{
+    margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);
+    font-size:12.5px;color:var(--muted);max-width:58ch;
+  }
+  .foot b{color:var(--ink-2);font-weight:600}
+  .empty{
+    font-family:Cormorant,serif;font-style:italic;font-size:18px;
+    color:var(--muted);padding:36px 0;
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">Дневник практики · MVP 0.1</div>
+    <h1>Спасение<em>.</em></h1>
+    <p class="verse">
+      Записывается только то, что <b>сделано</b>. Оценок нет: шкалы «насколько ты чист»
+      здесь не будет — не из осторожности, а потому что мытарь ушёл оправданным,
+      а фарисей, у которого метрики были в порядке, — нет.
+    </p>
+  </header>
+
+  <nav role="tablist">
+    <button role="tab" aria-selected="true" data-tab="today">Сегодня</button>
+    <button role="tab" aria-selected="false" data-tab="practice">Практика</button>
+    <button role="tab" aria-selected="false" data-tab="history">История</button>
+  </nav>
+
+  <!-- ── СЕГОДНЯ ───────────────────────────────────────────── -->
+  <section id="today">
+    <div class="date" id="todayDate"></div>
+    <div class="date-sub" id="todayStreak"></div>
+    <div id="params"></div>
+    <label class="toggle" style="margin-top:20px">
+      <input type="checkbox" id="scripture">
+      <span>Читал Писание сегодня</span>
+    </label>
+    <input class="note" id="scriptureWhat" placeholder="что читал — книга, глава" style="margin-left:27px;width:calc(100% - 27px)">
+    <p class="foot">
+      <b>Пустое поле — тоже ответ.</b> Не заполнилось за день — значит, в этом
+      разделе сегодня ничего не было. Это факт, а не провал, и его видно
+      во вкладке «История».
+    </p>
+  </section>
+
+  <!-- ── ПРАКТИКА ──────────────────────────────────────────── -->
+  <section id="practice" hidden>
+    <div class="date">Регулярность</div>
+    <div class="date-sub">Интервалы, а не оценки</div>
+    <div class="practice">
+      <div class="cell">
+        <h3>Исповедь</h3>
+        <div class="big" id="confDays">—</div>
+        <input type="date" id="confDate">
+      </div>
+      <div class="cell">
+        <h3>Причастие</h3>
+        <div class="big" id="commDays">—</div>
+        <input type="date" id="commDate">
+      </div>
+      <div class="cell">
+        <h3>Канон за 30 дней</h3>
+        <div class="big" id="canonCount">—</div>
+        <label class="toggle" style="margin-top:8px">
+          <input type="checkbox" id="canon"><span>Читал сегодня</span>
+        </label>
+      </div>
+      <div class="cell">
+        <h3>Писание за 30 дней</h3>
+        <div class="big" id="scriptCount">—</div>
+      </div>
+    </div>
+    <p class="foot">
+      Числа в днях — это <b>сколько прошло</b>, а не насколько хорошо. Интервал
+      между исповедями человек про себя действительно знает; «чистота 62 %» —
+      не знает никто.
+    </p>
+  </section>
+
+  <!-- ── ИСТОРИЯ ───────────────────────────────────────────── -->
+  <section id="history" hidden>
+    <div class="date">Последние 30 дней</div>
+    <div class="date-sub">Тёмная клетка — в этот день была запись</div>
+    <div id="grid"></div>
+    <div id="entries"></div>
+  </section>
+
+  <button class="save" id="save">Сохранить день</button>
+</div>
+
+<script>
+const VALUES = [
+  {n:1, name:"Чистосердечие",        ref:"Мф. 5:8",        q:"Где сегодня я говорил не то, что думаю?"},
+  {n:2, name:"Послушание",           ref:"Ин. 14:15",      q:"В чём я знал волю Божию и поступил иначе?"},
+  {n:3, name:"Тяга к истине",        ref:"Притч. 2:1–6",   q:"Что я узнал и что с этим сделал?"},
+  {n:4, name:"Помощь другим",        ref:"Мф. 25:35–40",   q:"Кому конкретно я сегодня помог?"},
+  {n:5, name:"Чистота",              ref:"Мф. 5:28",       q:"Что я впустил в себя, зная, что не стоит?"},
+  {n:6, name:"Добрые дела",          ref:"Иак. 2:17",      q:"Сделал или собирался?"},
+  {n:7, name:"Следование Евангелию", ref:"Лк. 9:23",       q:"Где Евангелие сегодня противоречило моему выбору?"},
+  {n:8, name:"Проповедь Слова",      ref:"Мф. 28:19–20",   q:"Молчал ли я там, где надо было сказать?"},
+];
+
+const KEY = "salvation:v1";
+const todayISO = () => new Date().toISOString().slice(0,10);
+
+// Хранилище: window.storage если есть, иначе память. localStorage не используется.
+const mem = {};
+const store = {
+  async get(k){
+    if (window.storage) { try { const r = await window.storage.get(k); return r ? r.value : null; } catch { return null; } }
+    return mem[k] ?? null;
+  },
+  async set(k,v){
+    if (window.storage) { try { await window.storage.set(k,v); return; } catch {} }
+    mem[k] = v;
+  }
+};
+
+let db = { days:{}, confession:"", communion:"" };
+
+async function load(){
+  const raw = await store.get(KEY);
+  if (raw) { try { db = JSON.parse(raw); } catch {} }
+  db.days = db.days || {};
+}
+async function persist(){ await store.set(KEY, JSON.stringify(db)); }
+
+function day(d){ return db.days[d] || (db.days[d] = {notes:{}, scripture:false, scriptureWhat:"", canon:false}); }
+
+function daysSince(iso){
+  if (!iso) return null;
+  const ms = new Date(todayISO()) - new Date(iso);
+  return Math.max(0, Math.round(ms / 86400000));
+}
+function lastNDays(n){
+  const out = [];
+  for (let i = n-1; i >= 0; i--){
+    const d = new Date(); d.setDate(d.getDate() - i);
+    out.push(d.toISOString().slice(0,10));
+  }
+  return out;
+}
+function hasContent(rec){
+  if (!rec) return false;
+  return Object.values(rec.notes||{}).some(v => v && v.trim()) || rec.scripture || rec.canon;
+}
+
+/* ── СЕГОДНЯ ── */
+function renderToday(){
+  const d = todayISO(), rec = day(d);
+  document.getElementById("todayDate").textContent =
+    new Date().toLocaleDateString("ru-RU",{day:"numeric",month:"long",year:"numeric"});
+
+  let streak = 0;
+  for (const iso of lastNDays(400).reverse()){
+    if (hasContent(db.days[iso])) streak++; else break;
+  }
+  document.getElementById("todayStreak").textContent =
+    streak > 0 ? `Дней подряд с записью: ${streak}` : "Первая запись";
+
+  const box = document.getElementById("params");
+  box.innerHTML = "";
+  VALUES.forEach(v => {
+    const el = document.createElement("div");
+    el.className = "param";
+    el.innerHTML = `
+      <div class="param-head">
+        <span class="num">${v.n}</span>
+        <span class="param-name">${v.name}</span>
+        <span class="ref">${v.ref}</span>
+      </div>
+      <p class="q">${v.q}</p>`;
+    const ta = document.createElement("textarea");
+    ta.className = "note"; ta.rows = 1;
+    ta.placeholder = "записать, если было";
+    ta.value = rec.notes[v.n] || "";
+    if (ta.value.trim()) ta.classList.add("filled");
+    ta.addEventListener("input", () => {
+      rec.notes[v.n] = ta.value;
+      ta.classList.toggle("filled", !!ta.value.trim());
+      ta.style.height = "auto"; ta.style.height = ta.scrollHeight + "px";
+    });
+    el.appendChild(ta);
+    box.appendChild(el);
+    ta.style.height = "auto"; ta.style.height = Math.max(30, ta.scrollHeight) + "px";
+  });
+
+  const sc = document.getElementById("scripture"), scw = document.getElementById("scriptureWhat");
+  sc.checked = !!rec.scripture; scw.value = rec.scriptureWhat || "";
+  sc.onchange = () => rec.scripture = sc.checked;
+  scw.oninput = () => rec.scriptureWhat = scw.value;
+}
+
+/* ── ПРАКТИКА ── */
+function renderPractice(){
+  const rec = day(todayISO());
+  const cd = document.getElementById("confDate"), md = document.getElementById("commDate");
+  cd.value = db.confession || ""; md.value = db.communion || "";
+
+  const show = (id, n) => {
+    const e = document.getElementById(id);
+    e.innerHTML = n === null ? "—" : `${n}<small>дн. назад</small>`;
+  };
+  show("confDays", daysSince(db.confession));
+  show("commDays", daysSince(db.communion));
+
+  const last30 = lastNDays(30);
+  const canonN  = last30.filter(d => db.days[d]?.canon).length;
+  const scriptN = last30.filter(d => db.days[d]?.scripture).length;
+  document.getElementById("canonCount").innerHTML  = `${canonN}<small>из 30</small>`;
+  document.getElementById("scriptCount").innerHTML = `${scriptN}<small>из 30</small>`;
+
+  cd.onchange = () => { db.confession = cd.value; renderPractice(); };
+  md.onchange = () => { db.communion  = md.value; renderPractice(); };
+  const cn = document.getElementById("canon");
+  cn.checked = !!rec.canon;
+  cn.onchange = () => { rec.canon = cn.checked; renderPractice(); };
+}
+
+/* ── ИСТОРИЯ ── */
+function renderHistory(){
+  const days = lastNDays(30), grid = document.getElementById("grid");
+  grid.innerHTML = "";
+  const rows = [
+    ...VALUES.map(v => ({label:v.name, on:d => !!(db.days[d]?.notes?.[v.n] || "").trim()})),
+    {label:"Писание", on:d => !!db.days[d]?.scripture},
+    {label:"Канон",   on:d => !!db.days[d]?.canon},
+  ];
+  rows.forEach(r => {
+    const row = document.createElement("div");
+    row.className = "grid-row";
+    row.innerHTML = `<span class="grid-label">${r.label}</span>`;
+    const cells = document.createElement("div");
+    cells.className = "cells";
+    days.forEach(d => {
+      const c = document.createElement("span");
+      c.className = "c" + (r.on(d) ? " on" : "") + (d === todayISO() ? " today" : "");
+      c.title = d;
+      cells.appendChild(c);
+    });
+    row.appendChild(cells);
+    grid.appendChild(row);
+  });
+
+  const box = document.getElementById("entries");
+  box.innerHTML = "";
+  const filled = days.filter(d => hasContent(db.days[d])).reverse();
+  if (!filled.length){
+    box.innerHTML = `<p class="empty">Записей пока нет. Заполни вкладку «Сегодня» — здесь появится история.</p>`;
+    return;
+  }
+  filled.forEach(d => {
+    const rec = db.days[d];
+    const el = document.createElement("div");
+    el.className = "entry";
+    let html = `<h4>${new Date(d).toLocaleDateString("ru-RU",{day:"numeric",month:"long"})}</h4>`;
+    VALUES.forEach(v => {
+      const t = (rec.notes[v.n] || "").trim();
+      if (t) html += `<p><b>${v.name}</b><br>${t.replace(/</g,"&lt;")}</p>`;
+    });
+    if (rec.scripture) html += `<p><b>Писание</b> ${(rec.scriptureWhat||"").replace(/</g,"&lt;")}</p>`;
+    if (rec.canon) html += `<p><b>Канон</b> прочитан</p>`;
+    el.innerHTML = html;
+    box.appendChild(el);
+  });
+}
+
+/* ── навигация ── */
+document.querySelectorAll("nav button").forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll("nav button").forEach(x => x.setAttribute("aria-selected", x === b));
+    ["today","practice","history"].forEach(id =>
+      document.getElementById(id).hidden = (id !== b.dataset.tab));
+    if (b.dataset.tab === "practice") renderPractice();
+    if (b.dataset.tab === "history")  renderHistory();
+  };
+});
+
+const saveBtn = document.getElementById("save");
+saveBtn.onclick = async () => {
+  await persist();
+  saveBtn.textContent = "Сохранено";
+  saveBtn.dataset.state = "saved";
+  setTimeout(() => { saveBtn.textContent = "Сохранить день"; delete saveBtn.dataset.state; }, 1600);
+  renderToday();
+};
+
+(async () => { await load(); renderToday(); renderPractice(); })();
+</script>
+</body>
+</html>

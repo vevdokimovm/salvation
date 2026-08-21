@@ -1,0 +1,24 @@
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+.idea/
+.vscode/
+
+_base/.repo-id
+*.zip
+_local/
+.env
+
+# Публичное зеркало: сюда НЕ едет ничего из перечисленного.
+# Правило и обоснование — base-repo/00-infrastructure/59-public-mirror-filter.md.
+_base/
+WATCHLOG.md
+00-infrastructure/
