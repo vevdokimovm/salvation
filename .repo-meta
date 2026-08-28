@@ -1,3 +1,3 @@
 description=Christian practice journal: eight sections with scripture-based self-check questions. Counts what was done, never scores who you are. Single HTML file, no build.
 topics=christian,journal,spiritual-practice,single-file,mvp,no-build
-private=true
+private=false
