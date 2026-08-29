@@ -1,5 +1,10 @@
 # Salvation — Christian Reading & Practice App — Vasilii Evdokimov
 
+<!-- STATUS -->
+> **Сейчас:** `v1.1.3` · 2026-08-29 · Исключение размечено формой gone: предмета нет по замыслу
+> Открытое — [`ROADMAP.md`](ROADMAP.md) · где стоим — [`WATCHLOG.md`](WATCHLOG.md) §0.
+<!-- /STATUS -->
+
 Христианское приложение. Работает **дневник практики**; Писание, жития и статьи — задуманы (см. ниже).
 
 > Most documents are in Russian.
@@ -57,3 +62,9 @@
 ---
 
 **Contact:** vevdokimovm@gmail.com · GitHub: [@vevdokimovm](https://github.com/vevdokimovm)
+
+## Структура
+
+| Каталог | Что внутри |
+|---|---|
+| `00-infrastructure/` | Инфраструктурный слой репы — служебные документы поверх раздаваемой базы |
